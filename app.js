@@ -8,8 +8,8 @@ const LOGO_SRC = '';
 const NEG = {
   nombre: 'Delicias A&J',
   rubro: 'Postres tradicionales hechos con amor',
-  colorPrincipal: '#14b8d4',
-  colorSecundario: '#2dd4bf',
+  colorPrincipal: '#1ab3cc',
+  colorSecundario: '#2cc9b0',
   tel: '0414-8021200 / 0414-4004641',
   wa: '584148021200',
   mail: 'axeloropeza0411@gmail.com',
@@ -140,7 +140,7 @@ async function cargar(esFondo = false) {
         pintarCatalogo();
         actualizarBarra();
       }
-      $('aviso-estado').textContent = 'Inventario sincronizado · Toca o arrastra';
+      $('aviso-estado').textContent = 'Inventario sincronizado · Toca o desliza';
     } else if (!esFondo) {
       try { productos = JSON.parse(localStorage.getItem('hc_aj') || '[]'); } catch (e) { productos = []; }
       if (!productos.length) productos = RESPALDO.map(norm);
@@ -644,8 +644,8 @@ function crearEscenaCian() {
   try { gl = cv.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: true, powerPreference: 'low-power' }); } catch (e) {}
   if (!gl) return { cambiarCatalogo() {}, pausar() {} };
 
-  const vs = 'attribute vec3 a;attribute vec2 b;uniform vec2 r;uniform float d;varying float k,g;void main(){vec2 c=a.xy/r*2.-1.;gl_Position=vec4(c.x,-c.y,0.,1.);gl_PointSize=min(a.z*d,64.);k=b.x;g=b.y;}';
-  const fs = 'precision mediump float;varying float k,g;void main(){vec2 p=(gl_PointCoord-.5)*2.;float a;if(k<.5){float d=abs(p.x)+abs(p.y);a=smoothstep(.16,0.,abs(d-.78))+smoothstep(.78,0.,d)*.14;}else if(k<1.5){a=smoothstep(1.,0.,length(p));a*=a*1.35;}else{float ring=abs(length(p)-.65);a=smoothstep(.18,0.,ring)*.75;}a*=.35+.65*g;vec3 cian=vec3(.08,.72,.83);vec3 esm=vec3(.18,.83,.75);vec3 brillo=vec3(.49,.91,1.);vec3 col=mix(cian,esm,step(.5,k));col=mix(col,brillo,g*.75);gl_FragColor=vec4(col*a,a);}';
+  const vs = 'attribute vec3 a;attribute vec2 b;uniform vec2 r;uniform float d;varying float k,g;void main(){vec2 c=a.xy/r*2.-1.;gl_Position=vec4(c.x,-c.y,0.,1.);gl_PointSize=min(a.z*d,48.);k=b.x;g=b.y;}';
+  const fs = 'precision mediump float;varying float k,g;void main(){vec2 p=(gl_PointCoord-.5)*2.;float a;if(k<.5){float d=abs(p.x)+abs(p.y);a=smoothstep(.15,0.,abs(d-.75))+smoothstep(.75,0.,d)*.1;}else if(k<1.5){a=smoothstep(1.,0.,length(p));a*=a*1.1;}else{float ring=abs(length(p)-.65);a=smoothstep(.16,0.,ring)*.6;}a*=.28+.55*g;vec3 cian=vec3(.1,.7,.8);vec3 esm=vec3(.17,.79,.69);vec3 brillo=vec3(.48,.89,.96);vec3 col=mix(cian,esm,step(.5,k));col=mix(col,brillo,g*.65);gl_FragColor=vec4(col*a,a);}';
 
   const mk = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); return o; };
   const pr = gl.createProgram();
@@ -656,7 +656,7 @@ function crearEscenaCian() {
 
   const lo = n => gl.getUniformLocation(pr, n);
   const low = (navigator.hardwareConcurrency || 4) <= 4 || (navigator.deviceMemory || 4) <= 2;
-  const N = low ? 48 : 88;
+  const N = low ? 64 : 110;
   const F = new Float32Array(N * 5);
   const V = [];
   const bf = gl.createBuffer();
@@ -681,18 +681,20 @@ function crearEscenaCian() {
   for (let i = 0; i < N; i++) {
     const k = i < N * .45 ? 0 : i < N * .85 ? 1 : 2;
     const ang = (i / N) * Math.PI * 2;
+    const esAmbiente = (i % 5) < 3; // 60% siempre distribuidas alrededor de toda la pantalla
     V.push({
       x: Math.random() * W,
       y: Math.random() * H,
       vx: 0, vy: 0,
-      bx: (Math.random() - .5) * .3,
-      by: -.08 - Math.random() * .22,
-      s: k ? (k == 1 ? 8 + Math.random() * 14 : 18) : 14 + Math.random() * 24,
+      bx: (Math.random() - .5) * .28,
+      by: -.07 - Math.random() * .2,
+      s: k ? (k == 1 ? 6 + Math.random() * 11 : 14) : 11 + Math.random() * 18,
       k, g: 0,
-      z: .25 + Math.random() * .75,
+      z: .2 + Math.random() * .8,
       ph: Math.random() * 6.3,
       ang,
-      rad: 24 + (i % 5) * 14
+      rad: 110 + (i % 6) * 42,
+      esAmbiente
     });
   }
 
@@ -712,18 +714,18 @@ function crearEscenaCian() {
     const cy = rect.top + rect.height * .48;
     const normY = cy / Math.max(1, H);
     const metaReunion = suave(.95, .55, normY) * suave(-.35, .05, normY);
-    reunion += (metaReunion - reunion) * .12;
+    reunion += (metaReunion - reunion) * .1;
 
     if (!arrastrando) {
-      giro += vGiro * .016 + (catalogoIdx === 1 ? .012 : .005);
+      giro += vGiro * .014 + (catalogoIdx === 1 ? .01 : .004);
       vGiro *= .94;
     }
 
     for (let i = 0; i < N; i++) {
       const p = V[i];
       if (p.k == 2) {
-        p.bx = Math.sin(s * .9 + p.ph) * .6;
-        p.by = Math.cos(s * 1.2 + p.ph) * .45;
+        p.bx = Math.sin(s * .85 + p.ph) * .5;
+        p.by = Math.cos(s * 1.1 + p.ph) * .4;
       }
       p.vx += (p.bx - p.vx) * .03;
       p.vy += (p.by - p.vy) * .03;
@@ -735,26 +737,27 @@ function crearEscenaCian() {
       const dx = p.x - px, dy = baseRy - py, d2 = dx * dx + dy * dy;
       if (d2 < 19600) {
         const dist = Math.sqrt(d2) || 1, f = 1 - dist / 140;
-        p.vx += dx / dist * f * 1.2;
-        p.vy += dy / dist * f * 1.2;
-        p.g = Math.min(1, p.g + f * .6);
+        p.vx += dx / dist * f * 1.1;
+        p.vy += dy / dist * f * 1.1;
+        p.g = Math.min(1, p.g + f * .55);
       }
       p.g *= .95;
 
-      const factorForma = catalogoIdx === 1 ? 1.25 : .88;
+      const factorForma = catalogoIdx === 1 ? 1.2 : .95;
       const a = p.ang + giro;
       const tx = cx + Math.cos(a) * p.rad * factorForma;
-      const ty = cy + Math.sin(a) * p.rad * .68 * factorForma;
+      const ty = cy + Math.sin(a) * p.rad * .85 * factorForma;
 
-      const drawX = p.x + (tx - p.x) * reunion;
-      const drawY = baseRy + (ty - baseRy) * reunion;
+      const atraccion = p.esAmbiente ? reunion * 0.16 : reunion * 0.55;
+      const drawX = p.x + (tx - p.x) * atraccion;
+      const drawY = baseRy + (ty - baseRy) * atraccion;
 
       const o = i * 5;
       F[o] = drawX;
       F[o + 1] = drawY;
-      F[o + 2] = p.s * (1 + reunion * .18);
+      F[o + 2] = p.s * (1 + atraccion * .12);
       F[o + 3] = p.k;
-      F[o + 4] = Math.min(1, p.g + reunion * .35);
+      F[o + 4] = Math.min(1, p.g + atraccion * .25);
     }
 
     gl.clear(gl.COLOR_BUFFER_BIT);

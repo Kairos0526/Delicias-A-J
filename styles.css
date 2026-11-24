@@ -1,12 +1,14 @@
 :root {
-  --bg: #07131a;
-  --panel: rgba(12, 31, 43, 0.9);
-  --borde: rgba(45, 212, 191, 0.28);
-  --texto: #eefaff;
-  --suave: #9fd3df;
-  --cian: #14b8d4;
-  --cian-claro: #7ce8ff;
-  --esmeralda: #2dd4bf;
+  --bg: #08090b;
+  --panel: rgba(16, 18, 22, 0.94);
+  --superficie: #14171c;
+  --borde: rgba(255, 255, 255, 0.09);
+  --borde-acento: rgba(26, 179, 204, 0.34);
+  --texto: #f3f5f7;
+  --suave: #9aa3ad;
+  --cian: #1ab3cc;
+  --cian-claro: #7be3f6;
+  --esmeralda: #2cc9b0;
 }
 
 * {
@@ -43,8 +45,8 @@ html, body {
   gap: 10px;
   padding: 14px 16px;
   border-bottom: 1px solid var(--borde);
-  background: rgba(7, 19, 26, 0.86);
-  backdrop-filter: blur(8px);
+  background: rgba(8, 9, 11, 0.9);
+  backdrop-filter: blur(10px);
 }
 
 .marca {
@@ -63,7 +65,19 @@ html, body {
 .marca h1 {
   margin: 0;
   font-size: 1.3rem;
-  color: var(--cian-claro);
+  color: var(--texto);
+  letter-spacing: -0.01em;
+}
+
+.marca h1::after {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 7px;
+  border-radius: 50%;
+  background: var(--cian);
+  vertical-align: middle;
 }
 
 .rubro {
@@ -83,12 +97,15 @@ html, body {
   font-size: 0.82rem;
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  background: #14171c;
+  border: 1px solid var(--borde);
+  color: var(--suave);
 }
 
 .estado.abierto {
-  background: rgba(45, 212, 191, 0.2);
-  color: #99f6e4;
+  background: rgba(44, 201, 176, 0.14);
+  border-color: rgba(44, 201, 176, 0.35);
+  color: #8ce9d8;
 }
 
 .escenario {
@@ -109,17 +126,19 @@ body.con-pedido {
   border: 1px solid var(--borde);
   border-radius: 16px;
   padding: 15px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
 }
 
 .panel h2 {
   margin: 0 0 10px;
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   color: var(--cian-claro);
+  font-weight: 700;
 }
 
 .panel h3 {
   margin: 14px 0 8px;
-  font-size: 1rem;
+  font-size: 0.96rem;
   color: var(--esmeralda);
 }
 
@@ -134,7 +153,7 @@ body.con-pedido {
   padding: 11px 12px;
   border-radius: 10px;
   border: 1px solid var(--borde);
-  background: transparent;
+  background: var(--superficie);
   color: var(--suave);
   font-weight: 600;
   font-size: 0.92rem;
@@ -143,13 +162,13 @@ body.con-pedido {
 
 .pestana[aria-selected="true"] {
   background: linear-gradient(135deg, var(--cian), var(--esmeralda));
-  color: #041318;
+  color: #06090b;
   border-color: transparent;
 }
 
 .nota-catalogo, .aviso-estado {
   margin: 4px 0 10px;
-  font-size: 0.86rem;
+  font-size: 0.85rem;
   color: var(--suave);
   line-height: 1.35;
 }
@@ -172,8 +191,8 @@ body.con-pedido {
   gap: 6px 10px;
   padding: 10px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(20, 184, 212, 0.22);
+  background: var(--superficie);
+  border: 1px solid var(--borde);
 }
 
 .miniatura {
@@ -182,8 +201,8 @@ body.con-pedido {
   height: 44px;
   padding: 4px;
   border-radius: 10px;
-  border: 1px solid var(--borde);
-  background: rgba(20, 184, 212, 0.14);
+  border: 1px solid var(--borde-acento);
+  background: #0d1014;
   color: var(--cian-claro);
   display: grid;
   place-items: center;
@@ -201,6 +220,7 @@ body.con-pedido {
   grid-area: nombre;
   font-weight: 700;
   font-size: 0.95rem;
+  color: var(--texto);
 }
 
 .detalle {
@@ -236,7 +256,8 @@ body.con-pedido {
 .cantidad button {
   width: 34px;
   height: 34px;
-  background: rgba(20, 184, 212, 0.16);
+  background: #1b2027;
+  border-color: var(--borde-acento);
   color: var(--cian-claro);
   position: relative;
   z-index: 2;
@@ -244,7 +265,7 @@ body.con-pedido {
 
 .cantidad button.mas {
   background: linear-gradient(135deg, var(--cian), var(--esmeralda));
-  color: #041318;
+  color: #06090b;
   border-color: transparent;
 }
 
@@ -255,7 +276,7 @@ body.con-pedido {
   text-decoration: none;
   padding: 10px 15px;
   background: linear-gradient(135deg, var(--cian), var(--esmeralda));
-  color: #041318;
+  color: #06090b;
   border-color: transparent;
   font-size: 0.9rem;
 }
@@ -265,7 +286,8 @@ body.con-pedido {
   align-items: center;
   justify-content: center;
   padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--superficie);
+  border-color: var(--borde);
   color: var(--texto);
   text-decoration: none;
   font-size: 0.86rem;
@@ -284,7 +306,7 @@ body.con-pedido {
   flex-wrap: wrap;
   gap: 8px;
   padding: 9px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--borde);
 }
 
 .etiqueta {
@@ -355,8 +377,8 @@ body:not(.con-pedido) .barra-pedido,
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: #0a1b24;
-  border-top: 1px solid var(--cian);
+  background: #0e1014;
+  border-top: 1px solid var(--borde-acento);
   z-index: 10;
 }
 
@@ -368,7 +390,7 @@ body:not(.con-pedido) .barra-pedido,
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(2, 10, 14, 0.78);
+  background: rgba(3, 4, 6, 0.84);
   display: grid;
   place-items: center;
   padding: 14px;
@@ -389,8 +411,8 @@ body:not(.con-pedido) .barra-pedido,
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  background: #0c1f2b;
-  border: 1px solid var(--borde);
+  background: #101216;
+  border: 1px solid var(--borde-acento);
   border-radius: 16px;
   padding: 16px;
   padding-bottom: 32px;
@@ -404,7 +426,7 @@ body:not(.con-pedido) .barra-pedido,
 }
 
 .modal-cabecera button {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--superficie);
   color: var(--texto);
   border: 1px solid var(--borde);
   border-radius: 8px;
@@ -423,13 +445,14 @@ body:not(.con-pedido) .barra-pedido,
   display: grid;
   gap: 4px;
   font-size: 0.88rem;
+  color: var(--suave);
 }
 
 .form-pedido input, .form-pedido select {
   padding: 10px;
   border-radius: 8px;
   border: 1px solid var(--borde);
-  background: #061117;
+  background: #090b0d;
   color: var(--texto);
   font-size: 16px;
 }
@@ -446,7 +469,7 @@ body:not(.con-pedido) .barra-pedido,
   align-items: center;
   gap: 10px;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--borde);
 }
 
 .datos-linea {
@@ -487,8 +510,8 @@ body.con-pedido .ayuda-flotante {
 
 .chat-caja {
   width: min(300px, calc(100vw - 32px));
-  background: #0c1f2b;
-  border: 1px solid var(--borde);
+  background: #101216;
+  border: 1px solid var(--borde-acento);
   border-radius: 14px;
   padding: 12px;
 }
@@ -505,12 +528,13 @@ body.con-pedido .ayuda-flotante {
   margin: 0;
   padding: 8px 10px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--superficie);
   font-size: 0.85rem;
 }
 
 .burbuja.mia {
-  background: rgba(20, 184, 212, 0.25);
+  background: rgba(26, 179, 204, 0.2);
+  border: 1px solid var(--borde-acento);
   justify-self: end;
 }
 
@@ -525,7 +549,7 @@ body.con-pedido .ayuda-flotante {
   padding: 8px 10px;
   border-radius: 8px;
   border: 1px solid var(--borde);
-  background: transparent;
+  background: #0b0d10;
   color: var(--texto);
   cursor: pointer;
 }
@@ -541,9 +565,9 @@ body.con-pedido .ayuda-flotante {
   transform: translateX(-50%) translateY(20px);
   opacity: 0;
   transition: opacity .2s, transform .2s;
-  background: #0f2938;
+  background: #12161c;
   color: var(--cian-claro);
-  border: 1px solid var(--cian);
+  border: 1px solid var(--borde-acento);
   padding: 10px 16px;
   border-radius: 999px;
   z-index: 30;
@@ -560,6 +584,7 @@ body.con-pedido .ayuda-flotante {
   height: 210px;
   border: 0;
   border-radius: 12px;
+  filter: invert(92%) hue-rotate(180deg) contrast(92%);
 }
 
 @media (min-width: 640px) {
