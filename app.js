@@ -1,4 +1,3 @@
-/* ============ DATOS DE HONEY CREAM ============ */
 /* ============ DATOS DE MUESTRA - DELICIAS A&J ============ */
 const APPS_SCRIPT_ID = '';
 const APPS_SCRIPT_URL = '';
@@ -9,8 +8,8 @@ const LOGO_SRC = '';
 const NEG = {
   nombre: 'Delicias A&J',
   rubro: 'Postres tradicionales hechos con amor',
-  colorPrincipal: '#e69d45',
-  colorSecundario: '#ffe4bc',
+  colorPrincipal: '#14b8d4',
+  colorSecundario: '#2dd4bf',
   tel: '0414-8021200 / 0414-4004641',
   wa: '584148021200',
   mail: 'axeloropeza0411@gmail.com',
@@ -21,9 +20,7 @@ const NEG = {
 };
 
 const HORARIO = { 0: null, 1: [8, 17], 2: [8, 17], 3: [8, 17], 4: [8, 17], 5: [8, 17], 6: [8, 17] };
-const PAGO = [
-  ['Pago Móvil', [['Teléfono principal', '0414-8021200'], ['Teléfono secundario', '0414-4004641'], ['Correo de contacto', 'axeloropeza0411@gmail.com']]]
-];
+const PAGO = [];
 const RESENAS = [];
 
 const FOTOS_PRODUCTOS = {
@@ -85,8 +82,8 @@ function norm(r) {
   };
   return {
     n: String(g(/prod|nom|tit/) || '').trim(),
-    a: num(g(/detal/)),
-    m: num(g(/mayor/)),
+    a: num(g(/detal|ya/)),
+    m: num(g(/mayor|quincena/)),
     s: Math.max(0, parseInt(g(/disp|stock|cant/), 10) || 0)
   };
 }
@@ -139,16 +136,16 @@ async function cargar(esFondo = false) {
       if (nuevaFirma !== firmaInventario) {
         firmaInventario = nuevaFirma;
         productos = nuevos;
-        try { localStorage.setItem('hc_proto', JSON.stringify(productos)); } catch (e) {}
+        try { localStorage.setItem('hc_aj', JSON.stringify(productos)); } catch (e) {}
         pintarCatalogo();
         actualizarBarra();
       }
       $('aviso-estado').textContent = 'Inventario sincronizado · Toca o arrastra';
     } else if (!esFondo) {
-      try { productos = JSON.parse(localStorage.getItem('hc_proto') || '[]'); } catch (e) { productos = []; }
+      try { productos = JSON.parse(localStorage.getItem('hc_aj') || '[]'); } catch (e) { productos = []; }
       if (!productos.length) productos = RESPALDO.map(norm);
       firmaInventario = JSON.stringify(productos.map(p => [p.n, p.a, p.m, p.s]));
-      $('aviso-estado').textContent = 'Mostrando respaldo local';
+      $('aviso-estado').textContent = 'Mostrando catálogo de muestra';
       pintarCatalogo();
       actualizarBarra();
     }
@@ -171,7 +168,7 @@ function pintarCatalogo() {
     const fotoUrl = FOTOS_PRODUCTOS[p.n];
     const miniaturaHtml = fotoUrl
       ? '<img src="' + esc(fotoUrl) + '" alt="' + esc(p.n) + '" loading="lazy">'
-      : '<svg viewBox="0 0 40 40" aria-hidden="true"><use href="#bee"/></svg>';
+      : '<svg viewBox="0 0 40 40" aria-hidden="true"><use href="#postre"/></svg>';
 
     return '<li class="item">' +
       '<button type="button" class="miniatura" data-foto="' + i + '" aria-label="Ver foto de ' + esc(p.n) + '">' + miniaturaHtml + '</button>' +
@@ -244,7 +241,7 @@ $('lista').addEventListener('click', e => {
       img.hidden = false;
     } else {
       img.hidden = true;
-      $('visor-desc').textContent += ' (Aún no hay foto cargada para este producto; se muestra vista previa de ficha).';
+      $('visor-desc').textContent += ' (Aún no hay foto cargada para este producto).';
     }
     $('visor-foto').hidden = false;
     return;
@@ -309,6 +306,15 @@ async function copiar(texto, msg) {
 }
 
 function pintarPagos() {
+  if (!PAGO.length) {
+    const aviso = '<p class="nota-catalogo">Por confirmar · Solicita los datos de Pago Móvil directamente al enviar tu pedido por WhatsApp.</p>';
+    $('filas-pago').innerHTML = aviso;
+    $('datos-pago-hoja').innerHTML = aviso;
+    if ($('copiar-todo')) $('copiar-todo').hidden = true;
+    if ($('copiar-pago-hoja')) $('copiar-pago-hoja').hidden = true;
+    return;
+  }
+
   const all = [];
   $('filas-pago').innerHTML = PAGO.map(([titulo, filas]) => {
     all.push(titulo + ':');
@@ -318,6 +324,9 @@ function pintarPagos() {
       '<button type="button" class="copiar" data-copy="' + esc(val) + '">Copiar</button></div>'
     ).join('');
   }).join('');
+
+  if ($('copiar-todo')) $('copiar-todo').hidden = false;
+  if ($('copiar-pago-hoja')) $('copiar-pago-hoja').hidden = false;
 
   $('filas-pago').addEventListener('click', e => {
     const b = e.target.closest('button[data-copy]');
@@ -376,13 +385,13 @@ function datosClienteValidos() {
 function construirMensajeWhatsApp(d) {
   const { total, lineas } = resumenCarrito();
   const detalleItems = lineas.map(l =>
-    '• ' + l.cantidad + ' × ' + l.producto.n + ' [' + etiquetaModo(l.modo) + ' — ' + formatoPresentacion(l.modo) + '] = ' + money(l.subtotal)
+    '• ' + l.cantidad + ' × ' + l.producto.n + ' [' + etiquetaModo(l.modo) + '] = ' + money(l.subtotal)
   ).join('\n');
 
   return 'Hola ' + NEG.nombre + ', quiero realizar este pedido:\n' +
     detalleItems +
     '\nTotal a pagar: ' + money(total) +
-    '\n\nDatos de verificación de pago:\n' +
+    '\n\nDatos del cliente:\n' +
     'Cliente: ' + d.nombre + ' ' + d.apellido + '\n' +
     'Cédula: ' + d.tipo + '-' + d.cedula + '\n' +
     'Teléfono: ' + d.telefono + '\n' +
@@ -449,7 +458,7 @@ async function descontarInventario(itemsPorProducto) {
       if (prod) prod.s = Math.max(0, prod.s - it.cantidad);
     });
     firmaInventario = JSON.stringify(productos.map(p => [p.n, p.a, p.m, p.s]));
-    try { localStorage.setItem('hc_proto', JSON.stringify(productos)); } catch (e) {}
+    try { localStorage.setItem('hc_aj', JSON.stringify(productos)); } catch (e) {}
     pintarCatalogo();
     actualizarBarra();
   } catch (e) {}
@@ -565,9 +574,8 @@ function pintarHorarioYEstado() {
 
 function pintarContactoYLegales() {
   const q = encodeURIComponent(NEG.dir);
-  $('enlace-whatsapp').href = waURL('Hola ' + NEG.nombre + ', quisiera hacer un pedido.');
   $('enlace-telefono').textContent = NEG.tel;
-  $('enlace-telefono').href = 'tel:' + NEG.tel.replace(/[^+\d]/g, '');
+  $('enlace-telefono').href = 'tel:+584148021200';
   const rvUrl = NEG.resena || 'https://www.google.com/maps/search/?api=1&query=' + q;
   $('enlace-resena').href = rvUrl;
   $('enlace-opinar').href = rvUrl;
@@ -595,7 +603,7 @@ function prepararAyuda() {
   const faqs = [
     ['¿Cuál es el horario?', 'Atendemos de lunes a sábado de ' + f12(h[0]) + ' a ' + f12(h[1]) + '. Domingos cerrado.'],
     ['¿Dónde están ubicados?', NEG.dir + '.'],
-    ['¿Cómo hago el pago?', 'Aceptamos Pago Móvil. Copia los datos en «Datos de pago» o dentro de «Tu pedido» y anota tu referencia.'],
+    ['¿Cómo funcionan los precios?', 'Tenemos precios «Para ya» y «Para la quincena». Puedes combinar ambos en el mismo pedido.'],
     ['¿Hacen delivery?', 'Sí, hacia ' + NEG.delivery.join(', ') + '.']
   ];
   const msgs = $('chat-mensajes');
@@ -627,7 +635,7 @@ function prepararAyuda() {
   });
 }
 
-function crearEscenaMiel() {
+function crearEscenaCian() {
   const cv = $('mar'), pz = $('pausa'), escenario = $('escenario');
   const mq = matchMedia('(prefers-reduced-motion:reduce)');
   let paused = mq.matches, raf = 0, px = -1e3, py = -1e3, W = 0, H = 0, sy = scrollY, last = 0, gl = null;
@@ -637,7 +645,7 @@ function crearEscenaMiel() {
   if (!gl) return { cambiarCatalogo() {}, pausar() {} };
 
   const vs = 'attribute vec3 a;attribute vec2 b;uniform vec2 r;uniform float d;varying float k,g;void main(){vec2 c=a.xy/r*2.-1.;gl_Position=vec4(c.x,-c.y,0.,1.);gl_PointSize=min(a.z*d,64.);k=b.x;g=b.y;}';
-  const fs = 'precision mediump float;varying float k,g;void main(){vec2 p=(gl_PointCoord-.5)*2.;float a;if(k<.5){vec2 q=abs(p);float h=max(q.x*.866+q.y*.5,q.y);a=smoothstep(.16,0.,abs(h-.8))+smoothstep(.8,0.,h)*.1;}else if(k<1.5){a=smoothstep(1.,0.,length(p));a*=a*1.3;}else{float e=length(p*vec2(.85,1.3));a=smoothstep(.75,.6,e)*(.6+.4*step(0.,sin(p.y*10.)));}a*=.32+.68*g;vec3 c=mix(vec3(.89,.69,.29),vec3(1.,.9,.64),g);gl_FragColor=vec4(c*a,a);}';
+  const fs = 'precision mediump float;varying float k,g;void main(){vec2 p=(gl_PointCoord-.5)*2.;float a;if(k<.5){float d=abs(p.x)+abs(p.y);a=smoothstep(.16,0.,abs(d-.78))+smoothstep(.78,0.,d)*.14;}else if(k<1.5){a=smoothstep(1.,0.,length(p));a*=a*1.35;}else{float ring=abs(length(p)-.65);a=smoothstep(.18,0.,ring)*.75;}a*=.35+.65*g;vec3 cian=vec3(.08,.72,.83);vec3 esm=vec3(.18,.83,.75);vec3 brillo=vec3(.49,.91,1.);vec3 col=mix(cian,esm,step(.5,k));col=mix(col,brillo,g*.75);gl_FragColor=vec4(col*a,a);}';
 
   const mk = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); return o; };
   const pr = gl.createProgram();
@@ -671,7 +679,7 @@ function crearEscenaMiel() {
   rs();
 
   for (let i = 0; i < N; i++) {
-    const k = i < N * .5 ? 0 : i < N * .92 ? 1 : 2;
+    const k = i < N * .45 ? 0 : i < N * .85 ? 1 : 2;
     const ang = (i / N) * Math.PI * 2;
     V.push({
       x: Math.random() * W,
@@ -679,7 +687,7 @@ function crearEscenaMiel() {
       vx: 0, vy: 0,
       bx: (Math.random() - .5) * .3,
       by: -.08 - Math.random() * .22,
-      s: k ? (k == 1 ? 8 + Math.random() * 14 : 20) : 16 + Math.random() * 28,
+      s: k ? (k == 1 ? 8 + Math.random() * 14 : 18) : 14 + Math.random() * 24,
       k, g: 0,
       z: .25 + Math.random() * .75,
       ph: Math.random() * 6.3,
@@ -714,8 +722,8 @@ function crearEscenaMiel() {
     for (let i = 0; i < N; i++) {
       const p = V[i];
       if (p.k == 2) {
-        p.bx = Math.sin(s * .9 + p.ph) * .7;
-        p.by = Math.cos(s * 1.3 + p.ph) * .5;
+        p.bx = Math.sin(s * .9 + p.ph) * .6;
+        p.by = Math.cos(s * 1.2 + p.ph) * .45;
       }
       p.vx += (p.bx - p.vx) * .03;
       p.vy += (p.by - p.vy) * .03;
@@ -803,7 +811,7 @@ function iniciar() {
   pintarPagos();
   prepararHojaPedido();
   prepararAyuda();
-  escenaControl = crearEscenaMiel();
+  escenaControl = crearEscenaCian();
   cargar();
   setInterval(pintarHorarioYEstado, 60000);
   setInterval(() => { if (!document.hidden) cargar(true); }, 5000);
