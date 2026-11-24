@@ -8,9 +8,12 @@ const LOGO_SRC = '';
 const NEG = {
   nombre: 'Delicias A&J',
   rubro: 'Postres tradicionales hechos con amor',
-  colorPrincipal: '#1ab3cc',
-  colorSecundario: '#2cc9b0',
-  tel: '0414-8021200 / 0414-4004641',
+  colorPrincipal: '#2689b8',
+  colorSecundario: '#2ab8a3',
+  contactos: [
+    { etiqueta: 'WhatsApp · Axel', tel: '0414-8021200', telHref: '+584148021200', wa: '584148021200' },
+    { etiqueta: 'WhatsApp · Atención 2', tel: '0414-4004641', telHref: '+584144004641', wa: '584144004641' }
+  ],
   wa: '584148021200',
   mail: 'axeloropeza0411@gmail.com',
   dir: 'San Felipe, Yaracuy',
@@ -50,7 +53,7 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&a
 const money = n => NEG.moneda + Number(n || 0).toFixed(2);
 const num = v => parseFloat(String(v).replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
 const f12 = h => (h % 12 || 12) + ':00 ' + (h < 12 ? 'a.m.' : 'p.m.');
-const waURL = t => 'https://wa.me/' + NEG.wa + (t ? '?text=' + encodeURIComponent(t) : '');
+const waURL = (t, numWa) => 'https://wa.me/' + (numWa || NEG.wa) + (t ? '?text=' + encodeURIComponent(t) : '');
 
 let productos = [];
 let modoActual = 'a';
@@ -574,14 +577,27 @@ function pintarHorarioYEstado() {
 
 function pintarContactoYLegales() {
   const q = encodeURIComponent(NEG.dir);
-  $('enlace-telefono').textContent = NEG.tel;
-  $('enlace-telefono').href = 'tel:+584148021200';
+  const c1 = NEG.contactos[0];
+  const c2 = NEG.contactos[1];
+
+  $('enlace-telefono').textContent = 'Llamar · ' + c1.tel;
+  $('enlace-telefono').href = 'tel:' + c1.telHref;
+
+  if ($('enlace-telefono-2') && c2) {
+    $('enlace-telefono-2').textContent = 'Llamar · ' + c2.tel;
+    $('enlace-telefono-2').href = 'tel:' + c2.telHref;
+  }
+
   const rvUrl = NEG.resena || 'https://www.google.com/maps/search/?api=1&query=' + q;
   $('enlace-resena').href = rvUrl;
   $('enlace-opinar').href = rvUrl;
 
-  $('filas-contacto').innerHTML =
-    '<div class="fila"><span class="etiqueta">WhatsApp</span><span class="valor">' + esc(NEG.tel) + '</span><a class="copiar" href="' + esc(waURL('Hola ' + NEG.nombre)) + '" target="_blank" rel="noopener">Escribir</a></div>' +
+  const filasWa = NEG.contactos.map(c =>
+    '<div class="fila"><span class="etiqueta">' + esc(c.etiqueta) + '</span><span class="valor">' + esc(c.tel) + '</span>' +
+    '<a class="copiar" href="' + esc(waURL('Hola ' + NEG.nombre + ', tengo una consulta.', c.wa)) + '" target="_blank" rel="noopener">Escribir</a></div>'
+  ).join('');
+
+  $('filas-contacto').innerHTML = filasWa +
     '<div class="fila"><span class="etiqueta">Correo</span><span class="valor">' + esc(NEG.mail) + '</span><a class="copiar" href="mailto:' + esc(NEG.mail) + '">Enviar</a></div>';
 
   $('zonas-delivery').innerHTML = NEG.delivery.map(z => '<li>' + esc(z) + '</li>').join('');
@@ -593,7 +609,7 @@ function pintarContactoYLegales() {
     ? RESENAS.map(r => '<blockquote class="opinion"><p>' + esc(r.texto) + '</p><cite>' + esc(r.nombre) + '</cite></blockquote>').join('')
     : '<p class="opinion">Aún no hay reseñas publicadas. Aquí solo se muestran opiniones reales de clientes.</p>';
 
-  const urlConsulta = waURL('Hola ' + NEG.nombre + ', tengo una consulta.');
+  const urlConsulta = waURL('Hola ' + NEG.nombre + ', tengo una consulta.', c1.wa);
   if ($('wa-consulta-top')) $('wa-consulta-top').href = urlConsulta;
   if ($('wa-consulta-chat')) $('wa-consulta-chat').href = urlConsulta;
 }
@@ -645,7 +661,7 @@ function crearEscenaCian() {
   if (!gl) return { cambiarCatalogo() {}, pausar() {} };
 
   const vs = 'attribute vec3 a;attribute vec2 b;uniform vec2 r;uniform float d;varying float k,g;void main(){vec2 c=a.xy/r*2.-1.;gl_Position=vec4(c.x,-c.y,0.,1.);gl_PointSize=min(a.z*d,48.);k=b.x;g=b.y;}';
-  const fs = 'precision mediump float;varying float k,g;void main(){vec2 p=(gl_PointCoord-.5)*2.;float a;if(k<.5){float d=abs(p.x)+abs(p.y);a=smoothstep(.15,0.,abs(d-.75))+smoothstep(.75,0.,d)*.1;}else if(k<1.5){a=smoothstep(1.,0.,length(p));a*=a*1.1;}else{float ring=abs(length(p)-.65);a=smoothstep(.16,0.,ring)*.6;}a*=.28+.55*g;vec3 cian=vec3(.1,.7,.8);vec3 esm=vec3(.17,.79,.69);vec3 brillo=vec3(.48,.89,.96);vec3 col=mix(cian,esm,step(.5,k));col=mix(col,brillo,g*.65);gl_FragColor=vec4(col*a,a);}';
+  const fs = 'precision mediump float;varying float k,g;void main(){vec2 p=(gl_PointCoord-.5)*2.;float a;if(k<.5){float d=abs(p.x)+abs(p.y);a=smoothstep(.15,0.,abs(d-.75))+smoothstep(.75,0.,d)*.1;}else if(k<1.5){a=smoothstep(1.,0.,length(p));a*=a*1.1;}else{float ring=abs(length(p)-.65);a=smoothstep(.16,0.,ring)*.6;}a*=.28+.55*g;vec3 metal=vec3(.16,.54,.73);vec3 esm=vec3(.16,.72,.64);vec3 plata=vec3(.56,.82,.95);vec3 col=mix(metal,esm,step(.5,k));col=mix(col,plata,g*.7);gl_FragColor=vec4(col*a,a);}';
 
   const mk = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); return o; };
   const pr = gl.createProgram();
@@ -681,7 +697,7 @@ function crearEscenaCian() {
   for (let i = 0; i < N; i++) {
     const k = i < N * .45 ? 0 : i < N * .85 ? 1 : 2;
     const ang = (i / N) * Math.PI * 2;
-    const esAmbiente = (i % 5) < 3; // 60% siempre distribuidas alrededor de toda la pantalla
+    const esAmbiente = (i % 5) < 3;
     V.push({
       x: Math.random() * W,
       y: Math.random() * H,

@@ -1,14 +1,14 @@
 :root {
   --bg: #08090b;
-  --panel: rgba(16, 18, 22, 0.94);
-  --superficie: #14171c;
+  --panel: rgba(15, 18, 22, 0.95);
+  --superficie: #14181e;
   --borde: rgba(255, 255, 255, 0.09);
-  --borde-acento: rgba(26, 179, 204, 0.34);
-  --texto: #f3f5f7;
-  --suave: #9aa3ad;
-  --cian: #1ab3cc;
-  --cian-claro: #7be3f6;
-  --esmeralda: #2cc9b0;
+  --borde-acento: rgba(56, 152, 199, 0.38);
+  --texto: #f2f5f8;
+  --suave: #99a3ae;
+  --cian: #2689b8;
+  --cian-claro: #7fc8eb;
+  --esmeralda: #2ab8a3;
 }
 
 * {
@@ -97,15 +97,15 @@ html, body {
   font-size: 0.82rem;
   padding: 6px 10px;
   border-radius: 999px;
-  background: #14171c;
+  background: var(--superficie);
   border: 1px solid var(--borde);
   color: var(--suave);
 }
 
 .estado.abierto {
-  background: rgba(44, 201, 176, 0.14);
-  border-color: rgba(44, 201, 176, 0.35);
-  color: #8ce9d8;
+  background: rgba(42, 184, 163, 0.14);
+  border-color: rgba(42, 184, 163, 0.36);
+  color: #8ce0d2;
 }
 
 .escenario {
@@ -126,7 +126,7 @@ body.con-pedido {
   border: 1px solid var(--borde);
   border-radius: 16px;
   padding: 15px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.48);
 }
 
 .panel h2 {
@@ -161,9 +161,9 @@ body.con-pedido {
 }
 
 .pestana[aria-selected="true"] {
-  background: linear-gradient(135deg, var(--cian), var(--esmeralda));
-  color: #06090b;
-  border-color: transparent;
+  background: linear-gradient(135deg, #4b9ec7 0%, #2689b8 52%, #1d6f96 100%);
+  color: #06090c;
+  border-color: rgba(127, 200, 235, 0.45);
 }
 
 .nota-catalogo, .aviso-estado {
@@ -202,7 +202,7 @@ body.con-pedido {
   padding: 4px;
   border-radius: 10px;
   border: 1px solid var(--borde-acento);
-  background: #0d1014;
+  background: #0c0f13;
   color: var(--cian-claro);
   display: grid;
   place-items: center;
@@ -256,7 +256,7 @@ body.con-pedido {
 .cantidad button {
   width: 34px;
   height: 34px;
-  background: #1b2027;
+  background: #1a2028;
   border-color: var(--borde-acento);
   color: var(--cian-claro);
   position: relative;
@@ -264,9 +264,9 @@ body.con-pedido {
 }
 
 .cantidad button.mas {
-  background: linear-gradient(135deg, var(--cian), var(--esmeralda));
-  color: #06090b;
-  border-color: transparent;
+  background: linear-gradient(135deg, #4b9ec7 0%, #2689b8 55%, #1d6f96 100%);
+  color: #06090c;
+  border-color: rgba(127, 200, 235, 0.4);
 }
 
 .boton-primario {
@@ -275,9 +275,9 @@ body.con-pedido {
   justify-content: center;
   text-decoration: none;
   padding: 10px 15px;
-  background: linear-gradient(135deg, var(--cian), var(--esmeralda));
-  color: #06090b;
-  border-color: transparent;
+  background: linear-gradient(135deg, #52a4cd 0%, #2689b8 52%, #1d6f96 100%);
+  color: #06090c;
+  border-color: rgba(127, 200, 235, 0.45);
   font-size: 0.9rem;
 }
 
@@ -377,7 +377,7 @@ body:not(.con-pedido) .barra-pedido,
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: #0e1014;
+  background: #0e1116;
   border-top: 1px solid var(--borde-acento);
   z-index: 10;
 }
@@ -411,7 +411,7 @@ body:not(.con-pedido) .barra-pedido,
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  background: #101216;
+  background: #0f1216;
   border: 1px solid var(--borde-acento);
   border-radius: 16px;
   padding: 16px;
@@ -510,7 +510,7 @@ body.con-pedido .ayuda-flotante {
 
 .chat-caja {
   width: min(300px, calc(100vw - 32px));
-  background: #101216;
+  background: #0f1216;
   border: 1px solid var(--borde-acento);
   border-radius: 14px;
   padding: 12px;
@@ -533,7 +533,7 @@ body.con-pedido .ayuda-flotante {
 }
 
 .burbuja.mia {
-  background: rgba(26, 179, 204, 0.2);
+  background: rgba(38, 137, 184, 0.22);
   border: 1px solid var(--borde-acento);
   justify-self: end;
 }
@@ -565,7 +565,7 @@ body.con-pedido .ayuda-flotante {
   transform: translateX(-50%) translateY(20px);
   opacity: 0;
   transition: opacity .2s, transform .2s;
-  background: #12161c;
+  background: #12171e;
   color: var(--cian-claro);
   border: 1px solid var(--borde-acento);
   padding: 10px 16px;
